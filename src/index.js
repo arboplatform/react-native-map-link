@@ -7,6 +7,8 @@ import {Linking} from 'react-native';
 import {generatePrefixes, generateTitles, isIOS} from './constants';
 import {askAppChoice, checkOptions} from './utils';
 
+export const isIOS = Platform.OS === 'ios';
+
 /**
  * Open a maps app, or let the user choose what app to open, with the given location.
  *
@@ -91,27 +93,23 @@ export async function showLocation(options) {
       }`;
       break;
     case 'google-maps':
-      let useTitleForQuery = !options.googleForceLatLon && title;
-      let googlePlaceId = options.googlePlaceId ? options.googlePlaceId : null;
-
       url = prefixes['google-maps'];
-      url += `?q=${useTitleForQuery ? encodedTitle : latlng}`;
-      url += isIOS ? '&api=1' : '';
-      url += googlePlaceId ? `&query_place_id=${googlePlaceId}` : '';
-      url += useSourceDestiny
-        ? `&saddr=${sourceLatLng}&daddr=${latlng}`
-        : `&ll=${latlng}`;
-      break;
-    case 'citymapper':
-      url = `${prefixes.citymapper}directions?endcoord=${latlng}`;
-
-      if (title) {
-        url += `&endname=${encodedTitle}`;
-      }
-
+      if (!isIOS) url += `${lat},+${lng}`;
       if (useSourceDestiny) {
-        url += `&startcoord=${sourceLatLng}`;
+        url += `?saddr=${sourceLatLng}&daddr=${latlng}`;
+      } else {
+        if (options.googleForceLatLon && title) {
+          url += `?q=loc:${lat},+${lng}+(${encodedTitle})`;
+        } else if (title) {
+          url += `?q=${encodedTitle}`;
+        } else {
+          url += `?q=${latlng}`;
+        }
       }
+
+      url += options.googlePlaceId
+        ? `&query_place_id=${options.googlePlaceId}`
+        : '';
       break;
     case 'uber':
       url = `${prefixes.uber}?action=setPickup&dropoff[latitude]=${lat}&dropoff[longitude]=${lng}`;

@@ -25,14 +25,12 @@ export function generatePrefixes(options) {
     'maps-me': 'mapsme://',
     osmand: isIOS ? 'osmandmaps://' : 'osmand.geo://',
     gett: 'gett://',
-    navermap: options.naverCallerName ? 'nmap://' : 'nmap-disabled://'
+    navermap: options.naverCallerName ? 'nmap://' : 'nmap-disabled://',,
   };
 }
 
 export function prefixForGoogleMaps(alwaysIncludeGoogle) {
-  return isIOS && !alwaysIncludeGoogle
-    ? 'comgooglemaps://'
-    : 'https://maps.google.com/';
+  return isIOS && !alwaysIncludeGoogle ? 'comgooglemaps://' : 'geo:';
 }
 
 export function generateTitles(titles) {
@@ -53,8 +51,8 @@ export function generateTitles(titles) {
     mapycz: 'Mapy.cz',
     'maps-me': 'Maps Me',
     osmand: 'OsmAnd',
-    gett:'Gett',
-    navermap:'Naver Map',
+    gett: 'Gett',
+    navermap: 'Naver Map',
     ...(titles || {}),
   };
 }

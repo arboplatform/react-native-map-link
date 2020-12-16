@@ -12,9 +12,6 @@ import {appKeys, isIOS} from './constants';
 export const getAvailableApps = async (prefixes) => {
   const availableApps = [];
   for (const app in prefixes) {
-    if (!prefixes.hasOwnProperty(app)) {
-      continue;
-    }
     const avail = await isAppInstalled(app, prefixes);
     if (avail) {
       availableApps.push(app);
