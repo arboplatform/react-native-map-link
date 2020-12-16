@@ -222,7 +222,6 @@ export function checkOptions(options, prefixes) {
   }
 }
 
-
 class MapsException {
   constructor(message) {
     this.message = message;
