@@ -7,8 +7,6 @@ import {Linking} from 'react-native';
 import {generatePrefixes, generateTitles, isIOS} from './constants';
 import {askAppChoice, checkOptions} from './utils';
 
-export const isIOS = Platform.OS === 'ios';
-
 /**
  * Open a maps app, or let the user choose what app to open, with the given location.
  *
@@ -94,7 +92,9 @@ export async function showLocation(options) {
       break;
     case 'google-maps':
       url = prefixes['google-maps'];
-      if (!isIOS) url += `${lat},+${lng}`;
+      if (!isIOS) {
+        url += `${lat},+${lng}`;
+      }
       if (useSourceDestiny) {
         url += `?saddr=${sourceLatLng}&daddr=${latlng}`;
       } else {
