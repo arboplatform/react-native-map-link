@@ -5,7 +5,7 @@
 import {Linking} from 'react-native';
 
 import {generatePrefixes, generateTitles, isIOS} from './constants';
-import {askAppChoice, checkOptions } from './utils';
+import {askAppChoice, checkOptions} from './utils';
 
 /**
  * Open a maps app, or let the user choose what app to open, with the given location.
@@ -91,22 +91,16 @@ export async function showLocation(options) {
       }`;
       break;
     case 'google-maps':
-      url = prefixes['google-maps'];
-      if (useSourceDestiny) {
-        url += `?saddr=${sourceLatLng}&daddr=${latlng}`;
-      } else {
-        if (options.googleForceLatLon && title) {
-          url += `?q=loc:${lat},+${lng}+(${encodedTitle})`;
-        } else if (title) {
-          url += `?q=${encodedTitle}`;
-        } else {
-          url += `?q=${latlng}`;
-        }
-      }
+      let useTitleForQuery = !options.googleForceLatLon && title;
+      let googlePlaceId = options.googlePlaceId ? options.googlePlaceId : null;
 
-      url += options.googlePlaceId
-        ? `&query_place_id=${options.googlePlaceId}`
-        : '';
+      url = prefixes['google-maps'];
+      url += `?q=${useTitleForQuery ? encodedTitle : latlng}`;
+      url += isIOS ? '&api=1' : '';
+      url += googlePlaceId ? `&query_place_id=${googlePlaceId}` : '';
+      url += useSourceDestiny
+        ? `&saddr=${sourceLatLng}&daddr=${latlng}`
+        : `&ll=${latlng}`;
       break;
     case 'citymapper':
       url = `${prefixes.citymapper}directions?endcoord=${latlng}`;
@@ -201,13 +195,15 @@ export async function showLocation(options) {
 
       break;
     case 'osmand':
-      url = isIOS ? `${prefixes.osmand}?lat=${lat}&lon=${lng}` : `${prefixes.osmand}?q=${lat},${lng}`;
+      url = isIOS
+        ? `${prefixes.osmand}?lat=${lat}&lon=${lng}`
+        : `${prefixes.osmand}?q=${lat},${lng}`;
 
       break;
     case 'gett':
-      url = `${prefixes['gett']}order?pickup=my_location&dropoff_latitude=${lat}&dropoff_longitude=${lng}`
+      url = `${prefixes.gett}order?pickup=my_location&dropoff_latitude=${lat}&dropoff_longitude=${lng}`;
 
-      break
+      break;
     case 'navermap':
       url = `${prefixes.navermap}map?lat=${lat}&lng=${lng}&appname=${options.naverCallerName}`;
 
