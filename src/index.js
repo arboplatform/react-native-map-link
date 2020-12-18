@@ -49,7 +49,7 @@ export async function showLocation(options) {
   const latlng = `${lat},${lng}`;
   const title = options.title && options.title.length ? options.title : null;
   const encodedTitle = encodeURIComponent(title);
-  let app = options.app && options.app.length ? options.app : null;
+  let app = !isIOS && options.app && options.app.length ? options.app : null;
   const dialogTitle =
     options.dialogTitle && options.dialogTitle.length
       ? options.dialogTitle
